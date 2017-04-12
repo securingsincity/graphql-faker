@@ -134,8 +134,12 @@ function runServer(schemaIDL: Source, extensionIDL: Source, optionsCB) {
     const schema = buildServerSchema(schemaIDL);
     extensionIDL.body = extensionIDL.body.replace('<RootTypeName>', schema.getQueryType().name);
   }
-
-  app.use('/graphql', cors(), graphqlHTTP(() => {
+  const corsOptions = {
+    credentials: true,
+    origin: 'http://maxwellv5:8080'
+  }
+  app.options('/graphql', cors(corsOptions))
+  app.use('/graphql', cors(corsOptions), graphqlHTTP(() => {
     const schema = buildServerSchema(schemaIDL);
 
     return {
